@@ -101,6 +101,10 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
     func doneButtonTapped(){
         self.dismiss(animated: true) { 
             self.saveUsernameToDatabase()
+            if let vc = self.presentingViewController {
+                 (vc as! ViewController).setupTopPlayerScoreboard()
+
+            }
         }
     }
     
@@ -113,7 +117,7 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
                     floatingLabelTextField.errorMessage = "Username Too Short"
                     self.hideButton()
                 }
-                else if(text.characters.count > 15) {
+                else if(text.characters.count > 10) {
                         floatingLabelTextField.errorMessage = "Username Too Long"
                         self.hideButton()
                     }
@@ -173,6 +177,8 @@ class SettingsViewController: UIViewController, UITextFieldDelegate {
         
         return applicationUUID!
     }
+    
+
 
     
     

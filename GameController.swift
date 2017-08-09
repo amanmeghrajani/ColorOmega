@@ -422,6 +422,7 @@ class GameController: UIViewController {
         invalidateTimers()
         self.vc = self.presentingViewController as? ViewController
         self.dismiss(animated: true, completion: {
+            self.vc?.setupTopPlayerScoreboard()
             self.vc?.saveScore()
             self.removeAllSubviews(ofView : self.view, flag: 1)
         })

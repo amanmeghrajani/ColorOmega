@@ -24,13 +24,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "ColorOmega/ViewController.swift"
-            timestampString = "523428499.801646"
+            timestampString = "523930651.958815"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "425"
-            endingLineNumber = "425"
-            landmarkName = "ViewController"
-            landmarkType = "3">
+            startingLineNumber = "595"
+            endingLineNumber = "595"
+            landmarkName = "animateMainViewWithColors(_:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

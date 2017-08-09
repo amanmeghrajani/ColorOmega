@@ -11,6 +11,7 @@ import Firebase
 import ReachabilitySwift
 import SAMKeychain
 import SkyFloatingLabelTextField
+import LTMorphingLabel
 
 
 
@@ -29,7 +30,7 @@ class ViewController: UIViewController {
     var scoreKey = "score"
     var usernameKey = "username"
     var anonymousKey = "anonymous"
-    
+   
     lazy var uuid : String = {
         return self.UUID()
     }()
@@ -100,7 +101,6 @@ class ViewController: UIViewController {
         scoreBoardLabel.textColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
         scoreBoardLabel.font = UIFont.italicSystemFont(ofSize: 18)
         scoreBoardLabel.textAlignment = .center
-        scoreBoardLabel.text = "Worlds Top 10"
         
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
         playButton.translatesAutoresizingMaskIntoConstraints = false
@@ -332,8 +332,9 @@ class ViewController: UIViewController {
         if !ViewController.hasConnectivity(){
             return // no internet
         }
+        self.scoreBoardLabel.text = "Worlds Top 5"
         
-        let query = ref?.queryOrdered(byChild: "score").queryLimited(toLast: 10)
+        let query = ref?.queryOrdered(byChild: "score").queryLimited(toLast: 5)
         query?.observe(.value, with: { (snapshot) in
             // print(snapshot.key)
             print(snapshot.childrenCount) // I got the expected number of items
@@ -349,13 +350,15 @@ class ViewController: UIViewController {
                 let username = rest.childSnapshot(forPath: "username").value
                 let score = rest.childSnapshot(forPath: "score").value
                 
-                if username != nil && score != nil {
-                    values.append((username as? String)!)
-                    values.append(self.formatNumber((score as? Int)!))
+                if let uname = username, let s = score {
+                    values.append((uname as? String)!)
+                    values.append(self.abbreviateNumber(num: (s as? Int)!))
                     ranks[index] = values
                     print("\(index): \(ranks[index])")
                     index -= 1
+                    
                 }
+               
                 
                 if ranks.count == Int(exactly: snapshot.childrenCount)! {
                     self.createScoreBoardView(ranks)
@@ -365,26 +368,195 @@ class ViewController: UIViewController {
     }
     
     
+    var labels : [LTMorphingLabel]!
+    
     func createScoreBoardView(_ ranks : [Int: [String]]){
         
-        let sbHeaderLabel = SkyFloatingLabelTextField()
-        sbHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
-        sbHeaderLabel.isUserInteractionEnabled = false
+        if labels != nil {
+            //scoreboardview already there, just needs update
+            updateScoreBoardView(ranks)
+            return
+        }
+        
+        let sbHeaderLine = SkyFloatingLabelTextField()
+        sbHeaderLine.translatesAutoresizingMaskIntoConstraints = false
+        sbHeaderLine.isUserInteractionEnabled = false
         //sbHeaderLabel.placeholder
-        sbHeaderLabel.placeholderColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
+        sbHeaderLine.placeholderColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
         //sbHeaderLabel.font = UIFont.italicSystemFont(ofSize: 15)
         
-        scoreBoardView.addSubview(sbHeaderLabel)
+        scoreBoardView.addSubview(sbHeaderLine)
         
         NSLayoutConstraint.activate([
-            sbHeaderLabel.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor),
-            sbHeaderLabel.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
-            sbHeaderLabel.topAnchor.constraint(equalTo: scoreBoardView.topAnchor),
-            sbHeaderLabel.heightAnchor.constraint(equalToConstant: 10)
+            sbHeaderLine.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor),
+            sbHeaderLine.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
+            sbHeaderLine.topAnchor.constraint(equalTo: scoreBoardView.topAnchor),
+            sbHeaderLine.heightAnchor.constraint(equalToConstant: 10)
             ])
-        for index in 1...ranks.count{
+        
+        self.labels = getLabels(howmany: (ranks.count + 1)*3)
+        
+        let heightOfRows : CGFloat = scoreBoardView.bounds.height / CGFloat((ranks.count + 1) * 2)
+        
+        let usernameIndex = 0
+        let scoreIndex = 1
+        var previousLine = SkyFloatingLabelTextField()
+        var i = 0
+        
+        for index in 0...ranks.count{
             
+            //line
+            let line = SkyFloatingLabelTextField()
+            line.translatesAutoresizingMaskIntoConstraints = false
+            line.isUserInteractionEnabled = false
+            line.placeholderColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
+            scoreBoardView.addSubview(line)
+            
+            
+            if index == 0{
+                
+                let rankLabel = self.labels[i] ; i+=1
+                rankLabel.text = "Rank"
+                
+                let usernameLabel = self.labels[i]  ; i+=1
+                usernameLabel.text = "Username"
+                
+                let scoreLabel = self.labels [i] ; i+=1
+                scoreLabel.text = "Score"
+                
+                previousLine = line
+                NSLayoutConstraint.activate([
+                    rankLabel.topAnchor.constraint(equalTo: sbHeaderLine.bottomAnchor, constant: 0),
+                    rankLabel.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor, constant: 0),
+                    rankLabel.widthAnchor.constraint(equalToConstant: scoreBoardView.bounds.width / 3),
+                    rankLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    
+                    
+                    usernameLabel.leftAnchor.constraint(equalTo: rankLabel.rightAnchor, constant: 0),
+                    usernameLabel.widthAnchor.constraint(equalToConstant: scoreBoardView.bounds.width / 3),
+                    usernameLabel.topAnchor.constraint(equalTo: sbHeaderLine.bottomAnchor, constant: 0),
+                    usernameLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    
+                    
+                    scoreLabel.topAnchor.constraint(equalTo: sbHeaderLine.bottomAnchor, constant: 0),
+                    scoreLabel.leftAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+                    scoreLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    scoreLabel.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
+                    
+                    line.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor),
+                    line.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
+                    line.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
+                    line.heightAnchor.constraint(equalToConstant: 5)
+
+                    ])
+                continue
+            }
+               else {
+      
+                
+                let rankLabel = self.labels[i] ; i+=1
+                rankLabel.text = String(index)
+                
+                let usernameLabel = self.labels[i] ; i+=1
+                usernameLabel.text = ranks[index]?[usernameIndex]
+                
+                let scoreLabel = self.labels[i] ; i+=1
+                scoreLabel.text = ranks[index]?[scoreIndex]
+                
+                NSLayoutConstraint.activate([
+                    rankLabel.topAnchor.constraint(equalTo: previousLine.bottomAnchor, constant: 0),
+                    rankLabel.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor, constant: 0),
+                    rankLabel.widthAnchor.constraint(equalToConstant: scoreBoardView.bounds.width / 3),
+                    rankLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    
+                    
+                    usernameLabel.leftAnchor.constraint(equalTo: rankLabel.rightAnchor, constant: 0),
+                    usernameLabel.widthAnchor.constraint(equalToConstant: scoreBoardView.bounds.width / 3),
+                    usernameLabel.topAnchor.constraint(equalTo: previousLine.bottomAnchor, constant: 0),
+                    usernameLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    
+                    
+                    scoreLabel.topAnchor.constraint(equalTo: previousLine.bottomAnchor, constant: 0),
+                    scoreLabel.leftAnchor.constraint(equalTo: usernameLabel.rightAnchor),
+                    scoreLabel.heightAnchor.constraint(equalToConstant: heightOfRows),
+                    scoreLabel.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
+                    
+                    line.leftAnchor.constraint(equalTo: scoreBoardView.leftAnchor),
+                    line.rightAnchor.constraint(equalTo: scoreBoardView.rightAnchor),
+                    line.topAnchor.constraint(equalTo: usernameLabel.bottomAnchor),
+                    line.heightAnchor.constraint(equalToConstant: 5)
+
+                    ])
+                
+                previousLine = line
+            }
+            
+
         }
+    }
+    
+    
+    func updateScoreBoardView(_ ranks : [Int: [String]]){
+        //all constraints and everything is setup, just update
+        //first three indexes are just labels
+        let usernameIndex = 0
+        let scoreIndex = 1
+        var i = 0
+        
+        for index in 0...ranks.count{
+            if index == 0 {
+                i = i + 3 // skip first three indexes
+            }
+            else{
+                
+                let rankLabel = self.labels[i] ; i+=1
+                rankLabel.text = String(index)
+                
+                let usernameLabel = self.labels[i] ; i+=1
+                usernameLabel.text = ranks[index]?[usernameIndex]
+                
+                let scoreLabel = self.labels[i] ; i+=1
+                scoreLabel.text = ranks[index]?[scoreIndex]
+        }
+    }
+    }
+    
+
+    
+    func abbreviateNumber(num: Int) -> String {
+        // less than 1000, no abbreviation
+        if num < 1000 {
+            return "\(num)"
+        }
+        
+        // less than 1 million, abbreviate to thousands
+        if num < 1000000 {
+            var n = Double(num);
+            n = Double( floor(n/100)/10 )
+            return "\(n.description)k"
+        }
+        
+        // more than 1 million, abbreviate to millions
+        var n = Double(num)
+        n = Double( floor(n/100000)/10 )
+        return "\(n.description)m"
+    }
+    
+    
+    func getLabels (howmany n : Int) -> [LTMorphingLabel] {
+        var returnDict : [Int: LTMorphingLabel] = [:]
+        var returnArray : [LTMorphingLabel] = []
+        for index in 1...n {
+            let label = LTMorphingLabel()
+            label.textColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
+            label.font = UIFont.italicSystemFont(ofSize: 13)
+            label.textAlignment = .center
+            label.translatesAutoresizingMaskIntoConstraints = false
+            self.scoreBoardView.addSubview(label)
+            returnArray.append(label)
+            returnDict[index] = label
+        }
+        return returnArray
     }
 
     
@@ -421,6 +593,10 @@ class ViewController: UIViewController {
         })
             
     }
+    
+
 
             }
+
+
 
