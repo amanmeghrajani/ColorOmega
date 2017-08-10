@@ -151,7 +151,6 @@ class GameController: UIViewController {
             var index = self.stages.index(of: self.currentStage)!
             if index < 2 {
                 index = index + 1
-                print("Stage \(index)")
             } else {
                 //player won
                 self.showCongratulationsAnimation()
@@ -196,9 +195,7 @@ class GameController: UIViewController {
         self.viewsPerRow = viewsPerRow
         
         
-        print("Height \(box.frame.height)")
-        print("Width \(box.frame.width)")
-        
+      
         let height = box.frame.height / CGFloat(rowsPerColumn)
         let width = box.frame.width / CGFloat(viewsPerRow)
         
@@ -206,11 +203,9 @@ class GameController: UIViewController {
             for i in 0..<viewsPerRow{
                 
                 //get color and colorname, and make sure that the string is small enough to fix into the box
-                print(i, j)
                 let tileView = UIView()
                 let color = HelperFunctionsController.randomColor()
                 
-                print(color.closestColorName)
                 tileView.backgroundColor = color
                 
                 //quick check before setting colorName
@@ -222,7 +217,6 @@ class GameController: UIViewController {
                 box.addSubview(tileView)
                 let key = "\(i)|\(j)"
                 tiles[key] = tileView
-                print(tiles.count)
                   box.layoutIfNeeded()
             }
         }
@@ -351,7 +345,6 @@ class GameController: UIViewController {
     //This will lead to two method calls, one to the timer to start ticking and one to the handler that will detect the touch/guess the user makes, lets start with the touch handler
     
     func tileSelected(gesture : UITapGestureRecognizer){
-        print("called")
         
         //invalidate Timers
         invalidateTimers()
@@ -365,9 +358,7 @@ class GameController: UIViewController {
         
         let key = "\(i)|\(j)"
         let tileView = tiles[key]
-        // if tileView?.layer.value(forKey: "color") as! String == winningColor {
-        if 1==1 {
-            print("you won")
+         if tileView?.layer.value(forKey: "color") as! String == winningColor {
             takeWinnerToTheNextLevel()
         } else {
             //show which view was the correct one
@@ -397,7 +388,6 @@ class GameController: UIViewController {
         
         timeLabel.alpha = 1
         timeLabel.countFrom(fromValue: seconds + 1 , to: 0, withDuration: dseconds, andAnimationType: .EaseIn, andCountingType: .Int)
-        print(timeLabel.currentValue)
         timer = Timer.scheduledTimer(timeInterval: dseconds, target: self, selector: #selector(timeFinished), userInfo: ["time" : timeLabel.currentValue], repeats: false)
    
     }
@@ -406,7 +396,6 @@ class GameController: UIViewController {
     
     
     func timeFinished(timer: Timer){
-        print("reached")
         //invalidate Timers
         invalidateTimers()
         self.showWinningTileAnimation()
@@ -441,7 +430,6 @@ class GameController: UIViewController {
         } else {
             addPoints(points: 10)
         }
-        print(String(points))
         pointsLabel.text = String(points)
         currentLevel = currentLevel + 1
         startGame(level: currentLevel)

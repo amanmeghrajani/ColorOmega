@@ -157,16 +157,16 @@ class ViewController: UIViewController {
     }
     
     func playButtonTapped(){
-        print("tapped")
-        
-        self.present(GameController(), animated: true, completion: {
-            (_) in
-            self.animateMainViewWithColors(10)
-        })
+        let gameController = GameController()
+        gameController.modalTransitionStyle = .flipHorizontal
+        self.present(gameController, animated: true, completion: nil)
     }
     
     func settingsButtonTapped(){
-        self.present(SettingsViewController(), animated: true, completion: {
+        
+        let settingsController = SettingsViewController()
+        settingsController.modalTransitionStyle = .flipHorizontal
+        self.present(settingsController, animated: true, completion: {
             (_) in
           
         })
@@ -289,7 +289,6 @@ class ViewController: UIViewController {
             let networkStatus = reachability?.currentReachabilityStatus
             
             if networkStatus == .notReachable {
-                print("not connected")
                 return false
             } else {
                 return true
@@ -336,9 +335,7 @@ class ViewController: UIViewController {
         
         let query = ref?.queryOrdered(byChild: "score").queryLimited(toLast: 5)
         query?.observe(.value, with: { (snapshot) in
-            // print(snapshot.key)
-            print(snapshot.childrenCount) // I got the expected number of items
-            var ranks : [Int: [String]] = [:]
+          var ranks : [Int: [String]] = [:]
             
             var index = Int(exactly: snapshot.childrenCount)!
             let enumerator = snapshot.children
@@ -354,7 +351,6 @@ class ViewController: UIViewController {
                     values.append((uname as? String)!)
                     values.append(self.abbreviateNumber(num: (s as? Int)!))
                     ranks[index] = values
-                    print("\(index): \(ranks[index])")
                     index -= 1
                     
                 }
@@ -561,38 +557,7 @@ class ViewController: UIViewController {
 
     
 
-    func animateMainViewWithColors(_ noc : Int){
-        
-        var colors : [UIColor] = [.cyan, .green, .red, .black]
-        var start = 0.00
-        let interval = 0.25
-        UIView.animateKeyframes(withDuration: TimeInterval(noc), delay: 0, options: [.autoreverse, .repeat, .allowUserInteraction], animations: {
-            print("animation running")
-            UIView.addKeyframe(withRelativeStartTime: start, relativeDuration: interval, animations: {
-                self.view.backgroundColor = colors[0]
-            })
-            start += interval
-            
-            UIView.addKeyframe(withRelativeStartTime: start, relativeDuration: interval, animations: {
-                    self.view.backgroundColor = colors[1]
-                })
-                start += interval
-                
-            UIView.addKeyframe(withRelativeStartTime: start, relativeDuration: interval, animations: {
-                        self.view.backgroundColor = colors[2]
-                    })
-                    start += interval
-                    
-            UIView.addKeyframe(withRelativeStartTime: start, relativeDuration: interval, animations: {
-                            self.view.backgroundColor = colors[3]
-                        })
-
-        }, completion: {
-            (_) in
-            self.view.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
-        })
-            
-    }
+   
     
 
 
