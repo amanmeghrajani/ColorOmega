@@ -25,6 +25,7 @@ class ViewController: UIViewController {
     var scoreBoardView = UIView()
     var scoreLabel = UILabel()
     var scoreBoardLabel = UILabel()
+    let welcomeLabel = LTMorphingLabel()
     var settingsButton : UIButton!
     var userDefault : UserDefaults! = UserDefaults()
     var scoreKey = "score"
@@ -39,7 +40,6 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         let mainview = self.view!
         mainview.backgroundColor = #colorLiteral(red: 0.9764705896, green: 0.850980401, blue: 0.5490196347, alpha: 1)
-        let welcomeLabel = UILabel()
         let playButton = UIButton(frame: CGRect(x: 125, y: 400, width: 100, height: 50))
         self.settingsButton = UIButton(frame: CGRect(x: 125, y: 600, width: 100, height: 50))
 
@@ -90,16 +90,16 @@ class ViewController: UIViewController {
         settingsButton.setTitle("Settings", for: .normal)
         settingsButton.addTarget(self, action: #selector(settingsButtonTapped), for: .touchDown)
         
-        welcomeLabel.text = "Color Omega"
+        welcomeLabel.text = "Palettee"
         welcomeLabel.textColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
-        welcomeLabel.font = UIFont.italicSystemFont(ofSize: 30)
+        welcomeLabel.font = UIFont.boldSystemFont(ofSize: 30)
         welcomeLabel.textAlignment = .center
         
         scoreBoardView.isOpaque = false
         //scoreBoardView.backgroundColor = .black
         
         scoreBoardLabel.textColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
-        scoreBoardLabel.font = UIFont.italicSystemFont(ofSize: 18)
+        scoreBoardLabel.font = UIFont.boldSystemFont(ofSize: 18)
         scoreBoardLabel.textAlignment = .center
         
         welcomeLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -152,13 +152,11 @@ class ViewController: UIViewController {
         
             ])
 
-        //animateMainViewWithColors(10)
         setupTopPlayerScoreboard()
     }
     
     func playButtonTapped(){
         let gameController = GameController()
-        gameController.modalTransitionStyle = .flipHorizontal
         self.present(gameController, animated: true, completion: nil)
     }
     
@@ -517,6 +515,9 @@ class ViewController: UIViewController {
     }
     }
     
+    
+
+    
 
     
     func abbreviateNumber(num: Int) -> String {
@@ -545,7 +546,7 @@ class ViewController: UIViewController {
         for index in 1...n {
             let label = LTMorphingLabel()
             label.textColor = #colorLiteral(red: 0.5058823824, green: 0.3372549117, blue: 0.06666667014, alpha: 1)
-            label.font = UIFont.italicSystemFont(ofSize: 13)
+            label.font = UIFont.boldSystemFont(ofSize: 13)
             label.textAlignment = .center
             label.translatesAutoresizingMaskIntoConstraints = false
             self.scoreBoardView.addSubview(label)

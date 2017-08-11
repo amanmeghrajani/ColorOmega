@@ -424,9 +424,9 @@ class GameController: UIViewController {
     func takeWinnerToTheNextLevel(){
         //increase points
         if self.currentStage == "Golden" {
-            addPoints(points: 30)
+            addPoints(points: 50)
         } else if self.currentStage == "Silver"{
-            addPoints(points: 20)
+            addPoints(points: 30)
         } else {
             addPoints(points: 10)
         }
