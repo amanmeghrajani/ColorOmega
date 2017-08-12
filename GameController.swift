@@ -358,8 +358,9 @@ class GameController: UIViewController {
         
         let key = "\(i)|\(j)"
         let tileView = tiles[key]
-         if tileView?.layer.value(forKey: "color") as! String == winningColor {
-            takeWinnerToTheNextLevel()
+        if tileView?.layer.value(forKey: "color") as! String == winningColor {
+        //if 1==1{
+        takeWinnerToTheNextLevel()
         } else {
             //show which view was the correct one
             self.showWinningTileAnimation()

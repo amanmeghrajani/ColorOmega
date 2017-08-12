@@ -19,7 +19,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-ColorOmega.xcscheme</key>
+		<key>Pods-Palettee.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -47,12 +47,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>14B87FB8717923BDACB36608CD9F6380</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>277B581D49B57E1D248057C57E5407F6</key>
+		<key>034D1D056D5D192977CD180A83AF3F46</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,12 +57,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9AE430AC96E245358790DB151B1BBA25</key>
+		<key>6E47006B30D826A07A96CDF5B166ACAB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B6AAF88668BE380100711DAC90424F43</key>
+		<key>B8A867E4207C8E65E96428A09FA6EE43</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BDFE6CDF95F21BB6F1DC081D6AC4D21B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
